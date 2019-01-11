@@ -55,4 +55,21 @@ router.get('/:id/actions/', (req, res) => {
     });
 })
 
+router.post('/', (req, res) => {
+    const newProject = req.body;
+
+    if (newProject.name && newProject.description) {
+        projectModel
+            .insert(newProject)
+            .then(project => {
+                res.status(201).json(newProject);
+            })
+            .catch(() => {
+                res.status(500).json({ "error": 'No information could be retrieved. '});
+            });
+    } else {
+        res.status(400).json({ "error": 'Please include a name and description.' });
+    }
+})
+
 module.exports = router;
