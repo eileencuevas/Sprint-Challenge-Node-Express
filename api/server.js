@@ -7,4 +7,6 @@ const server = express();
 
 middlewares(server);
 
+server.use('/api/projects/', projectsRouter);
+
 module.exports = server;
