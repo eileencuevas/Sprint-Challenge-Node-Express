@@ -74,4 +74,21 @@ router.put('/:id', (req, res) => {
         });
 })
 
+router.delete('/:id', (req, res) => {
+    const id = req.params.id;
+
+    actionModel
+        .remove(id)
+        .then(recordsDeleted => {
+            if (recordsDeleted === 1) {
+                res.status(200).json(recordsDeleted);
+            } else {
+                res.status(404).json({ "error": 'No action found with the specified ID.' });
+            }
+        })
+        .catch(() => {
+            res.status(500).json({ "error": `The action couldn't be deleted. Please try again. `});
+        });
+})
+
 module.exports = router;
