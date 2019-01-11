@@ -61,8 +61,8 @@ router.post('/', (req, res) => {
     if (newProject.name && newProject.description) {
         projectModel
             .insert(newProject)
-            .then(project => {
-                res.status(201).json(newProject);
+            .then(insertedProject => {
+                res.status(201).json(insertedProject);
             })
             .catch(() => {
                 res.status(500).json({ "error": `The project couldn't be added. Please try again. `});
@@ -77,24 +77,34 @@ router.put('/:id', (req, res) => {
     const dataForUpdate = req.body;
 
     projectModel
-    .get(id)
-    .then(project => {
-        if (project) {
-            projectModel
-                .update(id, dataForUpdate)
-                .then(updatedProject => {
-                    res.status(200).json(updatedProject);
-                })
-                .catch(() => {
-                    res.status(500).json({ "error": `The project couldn't be updated. Please try again. `});
-                });
-        } else {
-            res.status(404).json({ "error": 'No project found with the specified ID.' });
-        }
-    })
-    .catch(() => {
-        res.status(500).json({ "error": 'No information could be retrieved. '});
-    });
+        .update(id, dataForUpdate)
+        .then(updatedProject => {
+            if (updatedProject) {
+                res.status(200).json(updatedProject);
+            } else {
+                res.status(404).json({ "error": 'No project found with the specified ID.' });
+            }
+        })
+        .catch(() => {
+            res.status(500).json({ "error": `The project couldn't be updated. Please try again. `});
+        });
+})
+
+router.delete('/:id', (req, res) => {
+    const id = req.params.id;
+
+    projectModel
+        .remove(id)
+        .then(recordsDeleted => {
+            if (recordsDeleted === 1) {
+                res.status(200).json(recordsDeleted);
+            } else {
+                res.status(404).json({ "error": 'No project found with the specified ID.' });
+            }
+        })
+        .catch(() => {
+            res.status(500).json({ "error": `The project couldn't be deleted. Please try again. `});
+        });
 })
 
 module.exports = router;
