@@ -1,5 +1,6 @@
 const express = require('express');
 const actionModel = require('../../data/helpers/actionModel');
+const projectModel = require('../../data/helpers/projectModel');
 
 const router = express.Router();
 
@@ -29,6 +30,30 @@ router.get('/:id', (req, res) => {
         .catch(() => {
             res.status(500).json({ "error": 'No information could be retrieved. '});
         });
+})
+
+router.post('/', (req, res) => {
+    const newAction = req.body;
+
+    if (newAction.project_id && newAction.description && newAction.notes) {
+        projectModel
+            .get(newAction.project_id)
+            .then(() => {           
+                actionModel
+                    .insert(newAction)
+                    .then(insertedAction => {
+                        res.status(201).json(insertedAction);
+                    })
+                    .catch(() => {
+                        res.status(500).json({ "error": `The action couldn't be added. Please try again. `});
+                    });
+            })
+            .catch(() => {
+                res.status(404).json({ "error": 'No project found with the specified ID.' });
+            });
+    } else {
+        res.status(400).json({ "error": 'Please include a Project ID, description, and notes.' });
+    }
 })
 
 module.exports = router;
