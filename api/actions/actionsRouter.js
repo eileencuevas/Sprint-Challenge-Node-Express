@@ -56,4 +56,22 @@ router.post('/', (req, res) => {
     }
 })
 
+router.put('/:id', (req, res) => {
+    const id = req.params.id;
+    const dataForUpdate = req.body;
+
+    actionModel
+        .update(id, dataForUpdate)
+        .then(updatedAction => {
+            if (updatedAction) {
+                res.status(200).json(updatedAction);
+            } else {
+                res.status(404).json({ "error": 'No action found with the specified ID.' });
+            }
+        })
+        .catch(() => {
+            res.status(500).json({ "error": `The action couldn't be updated. Please try again. `});
+        });
+})
+
 module.exports = router;
